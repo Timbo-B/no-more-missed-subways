@@ -23,9 +23,9 @@ class subwayFetch:
         self.stations = json.load(open('stations.json'))
         self.apiKey = open("key.txt", "r").read()
 
-    def getStopID(self, nameStr, direction):
+    def getStopID(self, nameStr, direction, route):
         for station in self.stations:
-            if station['name'] == nameStr:
+            if ((station['name'] == nameStr) & (station['routeId'] == str(route))):
                 if direction == 'uptown':
                     return str(station['stop_id']) + 'N'
                 elif direction == 'downtown':
@@ -108,10 +108,10 @@ class subwayFetch:
             arrivals.extend(self.getTimes(feed))
         return arrivals
 
-    def getArrivalStr(self, stopName, direction, arrivals, getNextNum = 3):
+    def getArrivalStr(self, stopName, direction, route, arrivals, getNextNum = 3):
         arrivalsSort = arrivals.copy()
-        selStop = self.getStopID(stopName, direction)
-        arrivalsStop = [stop['minArrival'] for stop in arrivalsSort if stop['stopId'] == selStop]
+        selStop = self.getStopID(stopName, direction, route)
+        arrivalsStop = [stop['minArrival'] for stop in arrivalsSort if ((stop['stopId'] == selStop) & (stop['routeId'] == route))]
         displayStr = ''
         selArrivals = arrivalsStop[0:getNextNum].copy()
         for arrivalInd, arrival in enumerate(selArrivals):
